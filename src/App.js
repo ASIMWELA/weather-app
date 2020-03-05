@@ -1,4 +1,5 @@
 import React from "react";
+import { Layout } from 'antd'
 import NavBar from "./components/NavBar.jsx";
 import WeatherStat from "./components/WeatherStat.jsx";
 import CurrentWeather from "./components/CurrentWeather.jsx";
@@ -9,6 +10,8 @@ import CardComponent from './components/CardComponent.jsx'
 import Chart from './components/Chart.jsx'
 import { Switch, Route } from "react-router-dom";
 import "./styles.css";
+
+const { Footer } = Layout
 
 class App extends React.Component {
   constructor(props) {
@@ -22,7 +25,6 @@ class App extends React.Component {
       isLoading: true
     };
   }
-
 
   componentDidMount() {
 
@@ -38,6 +40,23 @@ class App extends React.Component {
       )
   }
 
+  searchCityCountry = event => {
+    let country = document.getElementById("country").value
+    let city = document.getElementById("city").value
+
+   
+  }
+
+  handleCityOnChange = event => {
+    let value = event.target.value
+    return value
+  }
+
+  handleCountryOnChange = event => {
+    let value = event.target.value
+    return value
+  }
+
   temperatureChart = () => {
     const { data } = this.state
     if (!data) {
@@ -51,9 +70,9 @@ class App extends React.Component {
     data.list.map(temperature => {
       cityTemp.cityTemparature.push(temperature.main.temp)
       cityTemp.name.push(temperature.name)
+      return null
     }
     )
-
     const dataPoints = [{
       type: "bar",
       dataPoints: [
@@ -81,9 +100,9 @@ class App extends React.Component {
     data.list.map(humidity => {
       cityHumidity.cityHumidity.push(humidity.main.humidity)
       cityHumidity.name.push(humidity.name)
+      return null
     }
     )
-
     const dataPoints = [{
       type: "spline",
       dataPoints: [
@@ -96,8 +115,6 @@ class App extends React.Component {
     }
     ]
     return <Chart title="HUMIDITY IN THREE CITIES" xTitle="cities" yTitle="humidity (in %)" data={dataPoints} />
-
-
   }
 
   pressureChart = () => {
@@ -105,7 +122,6 @@ class App extends React.Component {
     if (!data) {
       return <Load />
     }
-
     const cityPressure = {
       name: [],
       cityPressure: []
@@ -113,6 +129,7 @@ class App extends React.Component {
     data.list.map(humidity => {
       cityPressure.cityPressure.push(humidity.main.pressure)
       cityPressure.name.push(humidity.name)
+      return null
     }
     )
 
@@ -128,27 +145,31 @@ class App extends React.Component {
     }
     ]
     return <Chart title=" PRESSURE IN THREE CITIES" xTitle="cities" yTitle="pressure (in hpA)" data={dataPoints} />
-
-
   }
 
   render() {
     const { isLoading, data } = this.state
     console.log(data)
-
     return (
       <div className="App">
-        <NavBar />
+        <NavBar SeachWeather={this.searchCityCountry} handleCityOnChange={this.handleCityOnChange} handleCountryOnChange={this.handleCountryOnChange} cityId="city" countryId="country" />
         {isLoading ? <Load /> :
           <Switch>
             <Route path="/stat" exact component={() =>
               <WeatherStat>
                 <CardComponent chartOne={this.temperatureChart()} titleOne={"temperature comparisons"} chartTwo={this.humidityChart()} titleTwo="humidity comparisons" chartThree={this.pressureChart()} titleThree={"pressure grapgh"} />
+                <CardComponent chartOne={null} titleOne={null} chartTwo={null} titleTwo={null} chartThree={null} titleThree={null} />
               </WeatherStat>
             } />
             <Route path="/current" exact component={CurrentWeather} />
           </Switch>
         }
+
+        <Footer>
+          <h4>Contacts</h4>
+          <h4>connect with us</h4>
+
+        </Footer>
 
       </div>
     );
