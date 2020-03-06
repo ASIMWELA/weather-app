@@ -40,11 +40,24 @@ class App extends React.Component {
       )
   }
 
-  searchCityCountry = event => {
+  searchCityCountry = async (event) => {
+    event.preventDefault()
     let country = document.getElementById("country").value
     let city = document.getElementById("city").value
 
-   
+    await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=47173cae29386c36db52a1678fb5c144`)
+      .then(city => {
+        this.setState({
+          city: city.data,
+          isLoading: false
+        })
+      })
+
+    if (!this.state.city) {
+      return <Load />
+    }
+
+    console.log(this.state.city)
   }
 
   handleCityOnChange = event => {
@@ -148,8 +161,8 @@ class App extends React.Component {
   }
 
   render() {
-    const { isLoading, data } = this.state
-    console.log(data)
+    const { isLoading } = this.state
+
     return (
       <div className="App">
         <NavBar SeachWeather={this.searchCityCountry} handleCityOnChange={this.handleCityOnChange} handleCountryOnChange={this.handleCountryOnChange} cityId="city" countryId="country" />
